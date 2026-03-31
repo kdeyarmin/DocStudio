@@ -1,0 +1,26 @@
+{
+  "name": "doc-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Documentation Studio - standalone app for creating, automating, and managing software documentation",
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix app run dev",
+    "build": "npm --prefix app run build",
+    "preview": "npm --prefix app run preview",
+    "lint": "npm --prefix app run lint",
+    "typecheck": "npm --prefix app run typecheck",
+    "typecheck:playwright": "npm --prefix playwright-runner exec -- tsc --noEmit",
+    "typecheck:all": "npm run typecheck && npm run typecheck:playwright",
+    "runner:dev": "npm --prefix playwright-runner run dev",
+    "runner:build": "npm --prefix playwright-runner run build",
+    "runner:test": "npm --prefix playwright-runner run test",
+    "postinstall": "npm --prefix app install && npm --prefix playwright-runner install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kdeyarmin/DocStudio.git"
+  },
+  "author": "",
+  "license": "UNLICENSED"
+}

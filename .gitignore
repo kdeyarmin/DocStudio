@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Caches
+.eslintcache
+.cache/
+
+# Supabase local dev
+supabase/.temp/
+
+# Diagnostic / generated logs
+typecheck_full.txt
