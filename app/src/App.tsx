@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate, useSear
 import { ThemeProvider } from './lib/theme';
 import { AuthProvider, useAuth } from './lib/auth';
 
+const VideoCompositionBuilder = lazy(() => import('./components/video-builder/VideoCompositionBuilder'));
+const VideoPreview = lazy(() => import('./components/VideoPreview').then(m => ({ default: m.VideoPreview })));
 const DocStudioIndex = lazy(() => import('./components/doc-studio/DocStudioIndex').then(m => ({ default: m.DocStudioIndex })));
 const DocStudioDraftDetail = lazy(() => import('./components/doc-studio/DocStudioDraftDetail').then(m => ({ default: m.DocStudioDraftDetail })));
 const DocStudioSettings = lazy(() => import('./components/doc-studio/DocStudioSettings').then(m => ({ default: m.DocStudioSettings })));
@@ -229,6 +231,18 @@ function AppContent() {
             <p className="text-slate-400">Please sign in via your Supabase project to access the studio.</p>
           </div>
         </div>
+      } />
+            <Route path="/video-builder" element={
+        <ProtectedRoute>
+          <Suspense fallback={<LoadingSpinner />}>
+            <VideoCompositionBuilder />
+          </Suspense>
+        </ProtectedRoute>
+      } />
+      <Route path="/video-preview" element={
+        <Suspense fallback={<LoadingSpinner />}>
+          <VideoPreview />
+        </Suspense>
       } />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
