@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  REGISTERED_SUPPORT_HUB_PRODUCTS,
   buildSupportHubPublicationManifest,
   serializeSupportHubPublicationManifest,
 } from "./support-hub-publication.mjs";
@@ -51,6 +52,39 @@ function validVideoInput() {
     ],
   };
 }
+
+test("mirrors the exact registered Support Hub product allowlist", () => {
+  assert.deepEqual(REGISTERED_SUPPORT_HUB_PRODUCTS, [
+    "breathe",
+    "carebase",
+    "caremetric-emr",
+    "caremetric-go",
+    "caremetric-intel",
+    "pennsync",
+  ]);
+});
+
+test("accepts the newly registered CareMetric product slugs", () => {
+  const input = validVideoInput();
+  input.placements = [
+    {
+      product_slug: "caremetric-intel",
+      audience: ["customer-admin"],
+      route_pattern: "/analytics/**",
+    },
+    {
+      product_slug: "caremetric-go",
+      audience: ["customer"],
+      route_pattern: "/help/**",
+    },
+  ];
+
+  const manifest = buildSupportHubPublicationManifest(input);
+  assert.deepEqual(
+    manifest.placements.map(({ product_slug }) => product_slug),
+    ["caremetric-go", "caremetric-intel"],
+  );
+});
 
 test("builds one content-addressed video artifact for multiple product placements", () => {
   const manifest = buildSupportHubPublicationManifest(validVideoInput());

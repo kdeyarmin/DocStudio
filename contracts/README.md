@@ -14,8 +14,9 @@ The v1 contract exports only:
 `source_system` is always `docstudio`. DocStudio is an authoring source and is
 never treated as a customer product. The v1 product allowlist mirrors the
 registered Support Hub products at contract creation: `breathe`, `carebase`,
-`caremetric-emr`, and `pennsync`. A new slug must be registered in the Hub first,
-then added here in a reviewed contract change.
+`caremetric-emr`, `caremetric-go`, `caremetric-intel`, and `pennsync`. A new slug
+must be registered in the Hub first, then added here in a reviewed contract
+change.
 
 ## Security boundary
 
