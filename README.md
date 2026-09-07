@@ -107,6 +107,17 @@ npm run lint
 npm run typecheck
 ```
 
+### CareMetric Support Hub export
+
+Approved, PHI-reviewed documentation can be represented by the closed,
+content-addressed contract in [`contracts/`](contracts/README.md). The contract
+lets one article or video revision be placed in multiple registered CareMetric
+products without embedding provider URLs or copying the media reference.
+
+```bash
+npm run test:support-hub-contract
+```
+
 ## Project Structure
 
 ### Frontend (`app/`)
@@ -140,9 +151,12 @@ A standalone Express service for browser automation:
 - Review workflow orchestration
 - Export and packaging
 
-## CI Sync
+## Deployment status
 
-This directory is automatically synced to [`kdeyarmin/DocStudio`](https://github.com/kdeyarmin/DocStudio) via the `sync-docstudio.yml` GitHub Actions workflow in the CMbackup repository. Any changes pushed to `main` that touch `DocStudio/` will trigger a force-push to the standalone repo.
+This repository was extracted from CMbackup. It currently has no production
+frontend deployment workflow, and current CMbackup no longer embeds or syncs the
+DocStudio application. Treat this standalone repository as the authoring source
+and export-contract source until an explicit, reviewed hosting path is added.
 
 ## License
 
