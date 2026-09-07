@@ -12,6 +12,7 @@
     "typecheck": "npm --prefix app run typecheck",
     "typecheck:playwright": "npm --prefix playwright-runner exec -- tsc --noEmit",
     "typecheck:all": "npm run typecheck && npm run typecheck:playwright",
+    "test:support-hub-contract": "node --test contracts/support-hub-publication.test.mjs",
     "runner:dev": "npm --prefix playwright-runner run dev",
     "runner:build": "npm --prefix playwright-runner run build",
     "runner:test": "npm --prefix playwright-runner run test",
