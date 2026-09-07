@@ -11,6 +11,8 @@ export const REGISTERED_SUPPORT_HUB_PRODUCTS = Object.freeze([
   "breathe",
   "carebase",
   "caremetric-emr",
+  "caremetric-go",
+  "caremetric-intel",
   "pennsync",
 ]);
 
