@@ -18,6 +18,14 @@ registered Support Hub products at contract creation: `breathe`, `carebase`,
 must be registered in the Hub first, then added here in a reviewed contract
 change.
 
+Source versions use `docstudio-v` followed by a positive integer of at most
+15 digits, without leading zeroes (for example, `docstudio-v7`). Content keys
+use lowercase alphanumeric segments separated by one dot or hyphen, with
+3–120 characters overall. Repeated or mixed adjacent separators are invalid.
+These rules match the Hub importer; an exporter must reject incompatible
+identifiers before creating a publication handoff. Revision sequencing remains
+the importer's responsibility against its authoritative catalog snapshot.
+
 ## Security boundary
 
 The manifest contains no asset URL, Supabase storage path, HeyGen/provider value,

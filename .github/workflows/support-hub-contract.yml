@@ -1,0 +1,26 @@
+name: Support Hub publication contract
+
+on:
+  pull_request:
+    paths:
+      - contracts/**
+      - .github/workflows/support-hub-contract.yml
+  push:
+    branches: [main]
+    paths:
+      - contracts/**
+      - .github/workflows/support-hub-contract.yml
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test contracts/support-hub-publication.test.mjs
