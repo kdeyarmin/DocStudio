@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2, Package, Captions, Layers } from 'lucide-react';
 import {
   useAssemblyConfig,
@@ -33,24 +33,6 @@ export function AudioAssemblyTab() {
   const [assemblyDirty, setAssemblyDirty] = useState(false);
   const [captionDirty, setCaptionDirty] = useState(false);
   const [pkgDirty, setPkgDirty] = useState(false);
-
-  useEffect(() => {
-    if (assemblyData && !assemblyDirty) {
-      setAssemblyDraft(assemblyData);
-    }
-  }, [assemblyData, assemblyDirty]);
-
-  useEffect(() => {
-    if (captionData && !captionDirty) {
-      setCaptionDraft(captionData);
-    }
-  }, [captionData, captionDirty]);
-
-  useEffect(() => {
-    if (packageData && !pkgDirty) {
-      setPkgDraft(packageData);
-    }
-  }, [packageData, pkgDirty]);
 
   const assembly = assemblyDirty ? assemblyDraft : (assemblyData ?? DEFAULT_ASSEMBLY_CONFIG);
   const caption = captionDirty ? captionDraft : (captionData ?? DEFAULT_CAPTION_EXPORT_CONFIG);

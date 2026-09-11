@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2, ShieldCheck, RotateCcw } from 'lucide-react';
 import { useIntegrityRulesConfig, useSaveIntegrityRulesConfig } from '../../../hooks/useDocStudioSettings';
 import { useToast } from '../../../lib/toast';
@@ -67,21 +67,19 @@ function NumberField({ label, description, value, onChange, min = 0, max = 1000,
 
 export function IntegrityRulesTab() {
   const { showToast } = useToast();
-  const { data, isLoading } = useIntegrityRulesConfig();
+  const { data, isLoading, refetch } = useIntegrityRulesConfig();
   const save = useSaveIntegrityRulesConfig();
-  const [form, setForm] = useState<IntegrityRulesConfig>(DEFAULT_INTEGRITY_RULES_CONFIG);
-
-  useEffect(() => {
-    if (data) setForm(data);
-  }, [data]);
-
-  const update = (patch: Partial<IntegrityRulesConfig>) => setForm((prev) => ({ ...prev, ...patch }));
+  const [local, setForm] = useState<IntegrityRulesConfig | null>(null);
+  const form = local ?? data ?? DEFAULT_INTEGRITY_RULES_CONFIG;
+  const update = (patch: Partial<IntegrityRulesConfig>) => setForm((prev) => ({ ...(prev ?? form), ...patch }));
 
   const handleReset = () => setForm(DEFAULT_INTEGRITY_RULES_CONFIG);
 
   const handleSave = async () => {
     try {
       await save.mutateAsync(form);
+      const refreshed = await refetch();
+      if (!refreshed.error) setForm(current => current === local ? null : current);
       showToast('Integrity rules saved', 'success');
     } catch {
       showToast('Failed to save integrity rules', 'error');

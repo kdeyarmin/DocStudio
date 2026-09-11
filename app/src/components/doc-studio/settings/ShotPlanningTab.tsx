@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2, Film } from 'lucide-react';
 import { useShotPlanningConfig, useSaveShotPlanningConfig } from '../../../hooks/useDocStudioSettings';
 import { useToast } from '../../../lib/toast';
@@ -45,19 +45,17 @@ const EMPHASIS_OPTIONS: { value: ShotEmphasisLevel; label: string }[] = [
 
 export function ShotPlanningTab() {
   const { showToast } = useToast();
-  const { data, isLoading } = useShotPlanningConfig();
+  const { data, isLoading, refetch } = useShotPlanningConfig();
   const save = useSaveShotPlanningConfig();
-  const [form, setForm] = useState<ShotPlanningConfig>(DEFAULT_SHOT_PLANNING_CONFIG);
-
-  useEffect(() => {
-    if (data) setForm(data);
-  }, [data]);
-
-  const update = (patch: Partial<ShotPlanningConfig>) => setForm((prev) => ({ ...prev, ...patch }));
+  const [local, setForm] = useState<ShotPlanningConfig | null>(null);
+  const form = local ?? data ?? DEFAULT_SHOT_PLANNING_CONFIG;
+  const update = (patch: Partial<ShotPlanningConfig>) => setForm((prev) => ({ ...(prev ?? form), ...patch }));
 
   const handleSave = async () => {
     try {
       await save.mutateAsync(form);
+      const refreshed = await refetch();
+      if (!refreshed.error) setForm(current => current === local ? null : current);
       showToast('Shot planning settings saved', 'success');
     } catch {
       showToast('Failed to save settings', 'error');

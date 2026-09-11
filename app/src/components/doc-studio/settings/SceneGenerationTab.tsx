@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2, Layers } from 'lucide-react';
 import { useSceneGenerationConfig, useSaveSceneGenerationConfig } from '../../../hooks/useDocStudioSettings';
 import { useToast } from '../../../lib/toast';
@@ -7,19 +7,17 @@ import { DEFAULT_SCENE_GENERATION_CONFIG } from '../../../types/documentation';
 
 export function SceneGenerationTab() {
   const { showToast } = useToast();
-  const { data, isLoading } = useSceneGenerationConfig();
+  const { data, isLoading, refetch } = useSceneGenerationConfig();
   const save = useSaveSceneGenerationConfig();
-  const [form, setForm] = useState<SceneGenerationConfig>(DEFAULT_SCENE_GENERATION_CONFIG);
-
-  useEffect(() => {
-    if (data) setForm(data);
-  }, [data]);
-
-  const update = (patch: Partial<SceneGenerationConfig>) => setForm((prev) => ({ ...prev, ...patch }));
+  const [local, setForm] = useState<SceneGenerationConfig | null>(null);
+  const form = local ?? data ?? DEFAULT_SCENE_GENERATION_CONFIG;
+  const update = (patch: Partial<SceneGenerationConfig>) => setForm((prev) => ({ ...(prev ?? form), ...patch }));
 
   const handleSave = async () => {
     try {
       await save.mutateAsync(form);
+      const refreshed = await refetch();
+      if (!refreshed.error) setForm(current => current === local ? null : current);
       showToast('Scene generation settings saved', 'success');
     } catch {
       showToast('Failed to save settings', 'error');

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Film, Plus, Trash2, Loader as Loader2, Download, ChevronDown, ChevronRight, CircleCheck as CheckCircle, Circle as XCircle, TriangleAlert as AlertTriangle, RefreshCw, Code, Clock, Save, RotateCcw, Clapperboard, Play, Ban, CircleCheck as CheckCircle2, Circle as XCircleIcon, Activity, Package, FileText, Image, Captions, LayoutGrid, List } from 'lucide-react';
 import {
   useRenderProjects,
@@ -400,14 +400,8 @@ function RenderJobsSection({
   const completedJobs = jobs.filter(j => j.status === 'completed');
   const uniqueModes = new Set(completedJobs.map(j => j.render_mode));
   const defaultView = uniqueModes.size >= 2 ? 'compare' : 'history';
-  const [view, setView] = useState<'compare' | 'history'>(defaultView);
-  const [viewManuallySet, setViewManuallySet] = useState(false);
-
-  useEffect(() => {
-    if (!viewManuallySet) {
-      setView(defaultView);
-    }
-  }, [defaultView, viewManuallySet]);
+  const [manualView, setView] = useState<'compare' | 'history' | null>(null);
+  const view = manualView ?? defaultView;
 
   const activeJob = jobs.find(j => ACTIVE_RENDER_STATUSES.includes(j.status));
   const recentJobs = jobs.filter(j => TERMINAL_RENDER_STATUSES.includes(j.status)).slice(0, 10);
@@ -429,7 +423,7 @@ function RenderJobsSection({
           {jobs.length > 0 && (
             <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
               <button
-                onClick={() => { setView('compare'); setViewManuallySet(true); }}
+                onClick={() => setView('compare')}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold transition-colors ${
                   view === 'compare' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
@@ -439,7 +433,7 @@ function RenderJobsSection({
                 Compare
               </button>
               <button
-                onClick={() => { setView('history'); setViewManuallySet(true); }}
+                onClick={() => setView('history')}
                 className={`flex items-center gap-1 px-2 py-1 rounded-md text-[10px] font-semibold transition-colors ${
                   view === 'history' ? 'bg-white text-slate-800 shadow-sm' : 'text-slate-500 hover:text-slate-700'
                 }`}
