@@ -177,6 +177,10 @@ frontend deployment workflow, and current CMbackup no longer embeds or syncs the
 DocStudio application. Treat this standalone repository as the authoring source
 and export-contract source until an explicit, reviewed hosting path is added.
 
+See [runtime readiness and dependency review](docs/RUNTIME_READINESS.md) for the
+verified native backend, current login/environment gaps, compatible dependency
+remediation, and the source contract inventory for governed Hub integration.
+
 ## License
 
 Proprietary. All rights reserved.
