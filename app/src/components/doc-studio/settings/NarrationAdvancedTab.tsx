@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2, Mic as Mic2 } from 'lucide-react';
 import { useNarrationAdvancedConfig, useSaveNarrationAdvancedConfig } from '../../../hooks/useDocStudioSettings';
 import { useToast } from '../../../lib/toast';
@@ -14,19 +14,17 @@ const NARRATION_STYLES: { value: NarrationStyle; label: string; desc: string }[]
 
 export function NarrationAdvancedTab() {
   const { showToast } = useToast();
-  const { data, isLoading } = useNarrationAdvancedConfig();
+  const { data, isLoading, refetch } = useNarrationAdvancedConfig();
   const save = useSaveNarrationAdvancedConfig();
-  const [form, setForm] = useState<NarrationAdvancedConfig>(DEFAULT_NARRATION_ADVANCED_CONFIG);
-
-  useEffect(() => {
-    if (data) setForm(data);
-  }, [data]);
-
-  const update = (patch: Partial<NarrationAdvancedConfig>) => setForm((prev) => ({ ...prev, ...patch }));
+  const [local, setForm] = useState<NarrationAdvancedConfig | null>(null);
+  const form = local ?? data ?? DEFAULT_NARRATION_ADVANCED_CONFIG;
+  const update = (patch: Partial<NarrationAdvancedConfig>) => setForm((prev) => ({ ...(prev ?? form), ...patch }));
 
   const handleSave = async () => {
     try {
       await save.mutateAsync(form);
+      const refreshed = await refetch();
+      if (!refreshed.error) setForm(current => current === local ? null : current);
       showToast('Narration settings saved', 'success');
     } catch {
       showToast('Failed to save settings', 'error');

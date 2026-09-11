@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { HubPublicationExport } from './HubPublicationExport';
 import { Loader as Loader2, Package, Download, Copy, Check, Image, Captions, FileText, Code, ChevronDown, ChevronRight, Star, CircleCheck as CheckCircle2, Circle as XCircle, CircleAlert as AlertCircle, ArrowRight, Film, Video } from 'lucide-react';
 import { useBuildExportPackage, useExportSRT, useExportGuideMarkdown } from '../../../hooks/useDocStudioScenes';
 import { useLatestPackage } from '../../../hooks/useDocStudioPackage';
@@ -621,6 +622,7 @@ export function ExportTab({ draftId, onNavigateToTab }: Props) {
 
   return (
     <div className="space-y-4">
+      <HubPublicationExport key={draftId} draftId={draftId} />
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
           <Package size={15} className="text-slate-500" />

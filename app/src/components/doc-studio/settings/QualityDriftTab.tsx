@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2, Star, ShieldCheck } from 'lucide-react';
 import {
   useQualitySettingsConfig,
@@ -13,23 +13,24 @@ import { DEFAULT_QUALITY_SETTINGS_CONFIG, DEFAULT_DRIFT_SETTINGS_CONFIG } from '
 export function QualityDriftTab() {
   const { showToast } = useToast();
 
-  const { data: qualityData, isLoading: qualityLoading } = useQualitySettingsConfig();
-  const { data: driftData, isLoading: driftLoading } = useDriftSettingsConfig();
+  const { data: qualityData, isLoading: qualityLoading, refetch: refetchQuality } = useQualitySettingsConfig();
+  const { data: driftData, isLoading: driftLoading, refetch: refetchDrift } = useDriftSettingsConfig();
   const saveQuality = useSaveQualitySettingsConfig();
   const saveDrift = useSaveDriftSettingsConfig();
 
-  const [quality, setQuality] = useState<QualitySettingsConfig>(DEFAULT_QUALITY_SETTINGS_CONFIG);
-  const [drift, setDrift] = useState<DriftSettingsConfig>(DEFAULT_DRIFT_SETTINGS_CONFIG);
+  const [localQuality, setQuality] = useState<QualitySettingsConfig | null>(null);
+  const [localDrift, setDrift] = useState<DriftSettingsConfig | null>(null);
+  const quality = localQuality ?? qualityData ?? DEFAULT_QUALITY_SETTINGS_CONFIG;
+  const drift = localDrift ?? driftData ?? DEFAULT_DRIFT_SETTINGS_CONFIG;
 
-  useEffect(() => { if (qualityData) setQuality(qualityData); }, [qualityData]);
-  useEffect(() => { if (driftData) setDrift(driftData); }, [driftData]);
-
-  const updateQuality = (patch: Partial<QualitySettingsConfig>) => setQuality((prev) => ({ ...prev, ...patch }));
-  const updateDrift = (patch: Partial<DriftSettingsConfig>) => setDrift((prev) => ({ ...prev, ...patch }));
+  const updateQuality = (patch: Partial<QualitySettingsConfig>) => setQuality((prev) => ({ ...(prev ?? quality), ...patch }));
+  const updateDrift = (patch: Partial<DriftSettingsConfig>) => setDrift((prev) => ({ ...(prev ?? drift), ...patch }));
 
   const handleSaveQuality = async () => {
     try {
       await saveQuality.mutateAsync(quality);
+      const refreshed = await refetchQuality();
+      if (!refreshed.error) setQuality(current => current === localQuality ? null : current);
       showToast('Quality settings saved', 'success');
     } catch {
       showToast('Failed to save quality settings', 'error');
@@ -39,6 +40,8 @@ export function QualityDriftTab() {
   const handleSaveDrift = async () => {
     try {
       await saveDrift.mutateAsync(drift);
+      const refreshed = await refetchDrift();
+      if (!refreshed.error) setDrift(current => current === localDrift ? null : current);
       showToast('Drift settings saved', 'success');
     } catch {
       showToast('Failed to save drift settings', 'error');

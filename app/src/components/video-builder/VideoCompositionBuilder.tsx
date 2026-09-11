@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
   Film,
   Plus,
@@ -43,19 +43,33 @@ export function VideoCompositionBuilder() {
   const [showAddScene, setShowAddScene] = useState(false);
   const [rightPanel, setRightPanel] = useState<'scene' | 'theme'>('scene');
 
-  async function loadCompositions() {
+  const loadGeneration = useRef(0);
+  const fetchCompositions = useCallback(async () => {
+    const generation = ++loadGeneration.current;
+    try {
+      const { data, error } = await supabase
+        .from('video_compositions')
+        .select('*')
+        .order('updated_at', { ascending: false });
+      if (generation !== loadGeneration.current) return;
+      if (error) showToast('Failed to load compositions', 'error');
+      else setCompositions((data as VideoComposition[]) || []);
+    } catch {
+      if (generation === loadGeneration.current) showToast('Failed to load compositions', 'error');
+    } finally {
+      if (generation === loadGeneration.current) setLoading(false);
+    }
+  }, [showToast]);
+
+  function loadCompositions() {
     setLoading(true);
-    const { data } = await supabase
-      .from('video_compositions')
-      .select('*')
-      .order('updated_at', { ascending: false });
-    setCompositions((data as VideoComposition[]) || []);
-    setLoading(false);
+    void fetchCompositions();
   }
 
   useEffect(() => {
-    loadCompositions();
-  }, []);
+    void fetchCompositions();
+    return () => { loadGeneration.current++; };
+  }, [fetchCompositions]);
 
   async function createComposition() {
     if (!user) return;

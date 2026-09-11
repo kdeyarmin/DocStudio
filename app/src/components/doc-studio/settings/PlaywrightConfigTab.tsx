@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Save, Loader as Loader2 } from 'lucide-react';
 import { usePlaywrightSettings, useSavePlaywrightSettings } from '../../../hooks/useDocStudioSettings';
 import { useToast } from '../../../lib/toast';
@@ -7,19 +7,17 @@ import { DEFAULT_PLAYWRIGHT_SETTINGS } from '../../../types/documentation';
 
 export function PlaywrightConfigTab() {
   const { showToast } = useToast();
-  const { data: settings, isLoading } = usePlaywrightSettings();
+  const { data: settings, isLoading, refetch } = usePlaywrightSettings();
   const saveSettings = useSavePlaywrightSettings();
-  const [form, setForm] = useState<PlaywrightSettings>(DEFAULT_PLAYWRIGHT_SETTINGS);
-
-  useEffect(() => {
-    if (settings) setForm(settings);
-  }, [settings]);
-
-  const update = (patch: Partial<PlaywrightSettings>) => setForm((prev) => ({ ...prev, ...patch }));
+  const [local, setForm] = useState<PlaywrightSettings | null>(null);
+  const form = local ?? settings ?? DEFAULT_PLAYWRIGHT_SETTINGS;
+  const update = (patch: Partial<PlaywrightSettings>) => setForm((prev) => ({ ...(prev ?? form), ...patch }));
 
   const handleSave = async () => {
     try {
       await saveSettings.mutateAsync(form);
+      const refreshed = await refetch();
+      if (!refreshed.error) setForm(current => current === local ? null : current);
       showToast('Settings saved', 'success');
     } catch {
       showToast('Failed to save settings', 'error');

@@ -114,6 +114,25 @@ content-addressed contract in [`contracts/`](contracts/README.md). The contract
 lets one article or video revision be placed in multiple registered CareMetric
 products without embedding provider URLs or copying the media reference.
 
+In a reviewed draft, open **Export → Publish to CareMetric Hub**. Choose a stable
+content key, a whole-number publication version, library metadata, access and app
+placements. Article exports use the saved edited guide (or generated guide when
+no edit exists). Video exports accept a reviewed local MP4 and optional WebVTT
+captions and plain-text transcript. Confirm the exact material is free of patient
+and personal information, then prepare and download every displayed file.
+
+Open the linked Hub publishing screen, sign in there and select those files for
+review. The Hub independently checks bytes, permissions and placement changes;
+the source manifest does not grant publishing rights. Downloads preserve the
+exact bytes that were hashed. Editing settings or refreshing a changed/revoked
+native review invalidates the prepared export and its review checkbox.
+
+Browser-local export limits are 2 MiB for Markdown, 50 MiB for MP4 and 10 MiB per
+sidecar. These are not a claim about the deployed Hub Storage limit: the Hub
+reports and enforces its own upload cap before accepting files. No remote URL is
+fetched by this export path, no file is automatically uploaded, and no draft or
+Hub publication is changed by preparing an export.
+
 ```bash
 npm run test:support-hub-contract
 ```

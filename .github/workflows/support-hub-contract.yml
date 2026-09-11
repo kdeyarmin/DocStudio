@@ -4,11 +4,15 @@ on:
   pull_request:
     paths:
       - contracts/**
+      - app/**
+      - package.json
       - .github/workflows/support-hub-contract.yml
   push:
     branches: [main]
     paths:
       - contracts/**
+      - app/**
+      - package.json
       - .github/workflows/support-hub-contract.yml
 
 permissions:
@@ -23,4 +27,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: node --test contracts/support-hub-publication.test.mjs
+      - run: npm run test:support-hub-contract
+  app:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci --prefix app
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build

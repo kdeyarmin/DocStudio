@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { X, Check, TriangleAlert as AlertTriangle } from 'lucide-react';
 import {
   TimelineBlockData,
@@ -63,25 +63,20 @@ function validateValues(
   return errors;
 }
 
-export default function TimelinePropertiesPanel({ block, manifest, onApply, onClose }: Props) {
-  const [vals, setVals] = useState<FieldValues>({ startSec: '0', durationSec: '1' });
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isDirty, setIsDirty] = useState(false);
+export default function TimelinePropertiesPanel(props: Props) {
+  return <TimelinePropertiesEditor key={`${props.manifest.render_project_id}:${props.block?.key ?? ''}`} {...props} />;
+}
 
-  useEffect(() => {
-    if (block) {
-      const initial = getInitialValues(block);
-      setVals(initial);
-      setErrors([]);
-      setIsDirty(false);
-    }
-  }, [block]);
+function TimelinePropertiesEditor({ block, manifest, onApply, onClose }: Props) {
+  const [local, setVals] = useState<FieldValues | null>(null);
+  const vals = local ?? (block ? getInitialValues(block) : { startSec: '0', durationSec: '1' });
+  const isDirty = local !== null;
+  // Revalidate against the current manifest even if only its scene limits changed.
+  const errors = isDirty && block ? validateValues(vals, block, manifest) : [];
 
   function handleChange(field: keyof FieldValues, value: string) {
     const next = { ...vals, [field]: value };
     setVals(next);
-    setIsDirty(true);
-    if (block) setErrors(validateValues(next, block, manifest));
   }
 
   function handleApply() {
@@ -89,7 +84,7 @@ export default function TimelinePropertiesPanel({ block, manifest, onApply, onCl
     const start = secToMs(parseFloat(vals.startSec));
     const dur   = secToMs(parseFloat(vals.durationSec));
     onApply(block.key, start, start + dur);
-    setIsDirty(false);
+    setVals(null);
   }
 
   if (!block) {
