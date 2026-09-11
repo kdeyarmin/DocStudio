@@ -1,0 +1,23 @@
+name: DocStudio real render worker
+on:
+  pull_request:
+    paths: [app/**, contracts/**, Dockerfile.render-worker, .github/workflows/render-worker.yml]
+  push:
+    branches: [main]
+    paths: [app/**, contracts/**, Dockerfile.render-worker, .github/workflows/render-worker.yml]
+permissions:
+  contents: read
+jobs:
+  renderer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: node --test contracts/hub-render-job.test.mjs
+      - name: Build the actual production worker image
+        run: docker build -f Dockerfile.render-worker -t caremetric-docstudio-worker .
+      - name: Produce and verify actual MP4 and sidecars in the container
+        run: docker run --rm --init -e RUN_REAL_RENDER=1 caremetric-docstudio-worker node --test worker/render.test.mjs worker/client.test.mjs

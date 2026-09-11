@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/dist
+**/.env*
+**/.cache
+**/.remotion
+**/.eslintcache
+**/playwright-report
+**/test-results
+**/*.log
+supabase/.temp
