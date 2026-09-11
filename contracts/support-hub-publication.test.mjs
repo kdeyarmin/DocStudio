@@ -53,6 +53,22 @@ function validVideoInput() {
   };
 }
 
+test("rejects source identifiers that the Hub cannot import", () => {
+  for (const version of ["release-7", "docstudio-v0", "docstudio-v01", "docstudio-v1000000000000000"]) {
+    const input = validVideoInput();
+    input.source.version = version;
+    assert.throws(() => buildSupportHubPublicationManifest(input), /source.version/);
+  }
+  for (const contentKey of ["shared..team", "shared--team", "shared.-team"]) {
+    const input = validVideoInput();
+    input.source.content_key = contentKey;
+    assert.throws(() => buildSupportHubPublicationManifest(input), /source.content_key/);
+  }
+  const input = validVideoInput();
+  input.source.version = "docstudio-v999999999999999";
+  assert.equal(buildSupportHubPublicationManifest(input).source.version, input.source.version);
+});
+
 test("mirrors the exact registered Support Hub product allowlist", () => {
   assert.deepEqual(REGISTERED_SUPPORT_HUB_PRODUCTS, [
     "breathe",

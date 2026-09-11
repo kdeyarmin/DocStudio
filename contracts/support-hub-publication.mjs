@@ -21,8 +21,9 @@ const CONTENT_KINDS = new Set(["article", "video"]);
 const ACCESS_LEVELS = new Set(["public", "customer", "staff"]);
 const AUDIENCES = new Set(["all", "customer", "customer-admin", "manager"]);
 const SHA256 = /^[a-f0-9]{64}$/;
-const CONTENT_KEY = /^[a-z0-9][a-z0-9.-]{1,118}[a-z0-9]$/;
-const SOURCE_VERSION = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,79}$/;
+// Match the Hub's immutable content keys and monotonic source-version contract.
+const CONTENT_KEY = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/;
+const SOURCE_VERSION = /^docstudio-v([1-9]\d{0,14})$/;
 const LOCALE = /^[a-z]{2,3}(?:-[A-Z]{2})?$/;
 const ISO_INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?Z$/;
 const UUID = /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/i;
