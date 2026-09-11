@@ -1,0 +1,20 @@
+FROM node:24-bookworm-slim
+
+# Chrome shared libraries follow https://www.remotion.dev/docs/docker.
+# ffprobe independently verifies completed encoded output.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates ffmpeg fonts-dejavu-core fonts-noto-color-emoji \
+    libnss3 libdbus-1-3 libatk1.0-0 libgbm-dev libasound2 libxrandr2 \
+    libxkbcommon-dev libxfixes3 libxcomposite1 libxdamage1 libatk-bridge2.0-0 \
+    libpango-1.0-0 libcairo2 libcups2 \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /workspace/app
+COPY app/package.json app/package-lock.json ./
+RUN npm ci && npx --no-install remotion browser ensure
+COPY app/src/video ./src/video
+COPY app/worker ./worker
+COPY contracts /workspace/contracts
+RUN chown -R node:node /workspace
+USER node
+ENV NODE_ENV=production
+CMD ["node", "worker/main.mjs"]
