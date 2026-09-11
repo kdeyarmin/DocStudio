@@ -46,12 +46,19 @@ export async function probeVideo(path, {signal, ffprobe = 'ffprobe'} = {}) {
     const header = Buffer.alloc(12); const {bytesRead} = await file.read(header, 0, header.length, 0);
     if (bytesRead !== 12 || header.subarray(4, 8).toString('ascii') !== 'ftyp') throw new Error('Actual MP4 output is required');
   } finally { await file.close(); }
-  const {stdout} = await execute(ffprobe, ['-v', 'error', '-show_entries', 'format=duration:stream=codec_type,codec_name,width,height,r_frame_rate', '-of', 'json', path],
+  const {stdout} = await execute(ffprobe, ['-v', 'error', '-show_entries', 'format=duration:stream=codec_type,codec_name,width,height,r_frame_rate,duration,nb_frames', '-of', 'json', path],
     {signal, timeout: 30000, maxBuffer: 65536, windowsHide: true});
   const result = JSON.parse(stdout), video = result.streams?.find(stream => stream.codec_type === 'video');
-  const durationMs = Math.round(Number(result.format?.duration) * 1000);
+  // MP4 container duration includes audio encoder padding. The reviewed scene
+  // timeline follows the encoded video track; verify its exact frame count and
+  // duration independently while allowing at most 100ms of container padding.
+  const durationMs = Math.round(Number(video?.duration) * 1000);
+  const containerDurationMs = Math.round(Number(result.format?.duration) * 1000);
+  const frameCount = Number(video?.nb_frames);
   if (!video || video.codec_name !== 'h264' || video.width !== 1920 || video.height !== 1080
-      || video.r_frame_rate !== '30/1' || !Number.isSafeInteger(durationMs) || durationMs < 1) throw new Error('Rendered video failed media validation');
+      || video.r_frame_rate !== '30/1' || !Number.isSafeInteger(durationMs) || durationMs < 1
+      || !Number.isSafeInteger(frameCount) || frameCount<1 || Math.abs(durationMs-frameCount*1000/30)>1
+      || !Number.isSafeInteger(containerDurationMs) || Math.abs(containerDurationMs-durationMs)>100) throw new Error('Rendered video failed media validation');
   return {durationMs, width: video.width, height: video.height, fps: 30, hasAudio: result.streams.some(stream => stream.codec_type === 'audio')};
 }
 

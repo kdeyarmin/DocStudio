@@ -34,7 +34,7 @@ export function workerClient({origin, credential, workerId, sourceRevision, fetc
       body: JSON.stringify({operation, workerId, sourceRevision, ...input}),
       signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(20000)]) : AbortSignal.timeout(20000)});
     if (!response.ok) { await response.body?.cancel(); throw new WorkerTransportError(response.status); }
-    return JSON.parse((await boundedBytes(response, 512 * 1024)).toString('utf8'));
+    return JSON.parse((await boundedBytes(response, 1024 * 1024)).toString('utf8'));
   }
   return {
     async ping(signal) {
