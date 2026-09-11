@@ -42,6 +42,7 @@ export async function prepareSupportHubExport({ draft, metadata, primary, captio
   if (phiReviewed !== true) throw new Error('Review the exact material and confirm it contains no patient or personal information.');
   const kind = draft.output_type === 'screenshot_guide' ? 'article' : 'video';
   if (kind === 'article' && (captions || transcript || durationMs !== undefined)) throw new Error('Article exports cannot include video attachments.');
+  if (kind === 'video' && (!captions || !transcript)) throw new Error('Video exports require both WebVTT captions and a plain-text transcript.');
   const mediaType = kind === 'article' ? 'text/markdown' : 'video/mp4';
   const source = kind === 'article'
     ? new Blob([encoder.encode(draft.edited_content?.guide_md ?? draft.generated_content?.guide_md ?? '')], { type: mediaType })

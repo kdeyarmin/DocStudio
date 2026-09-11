@@ -59,7 +59,8 @@ test('video sidecars keep exact bytes and distinct digest associations', async (
 });
 test('rejects wrong containers, mislabeled captions, binary text and invalid duration', async () => {
   for (const patch of [{ primary: new Blob(['not mp4']) }, { captions: new Blob(['1\n00:00,000 --> 00:01,000\nHello']) },
-    { transcript: new Blob([new Uint8Array([255, 254])]) }, { durationMs: 0 }]) {
+    { transcript: new Blob([new Uint8Array([255, 254])]) }, { durationMs: 0 }, { durationMs: 86_400_001 },
+    { captions: undefined }, { transcript: undefined }, { transcript: new Blob(['WEBVTT\n\n00:00.000 --> 00:01.000\nHello\n']) }]) {
     await assert.rejects(prepareSupportHubExport({ ...videoInput(), ...patch }));
   }
 });

@@ -170,13 +170,9 @@ function validateArtifact(artifact, kind) {
 
   if (kind === "video") {
     result.duration_ms = assertPositiveInteger(artifact.duration_ms, "artifact.duration_ms");
-
-    if (artifact.captions_sha256 !== undefined) {
-      result.captions_sha256 = assertSha256(artifact.captions_sha256, "artifact.captions_sha256");
-    }
-    if (artifact.transcript_sha256 !== undefined) {
-      result.transcript_sha256 = assertSha256(artifact.transcript_sha256, "artifact.transcript_sha256");
-    }
+    if (result.duration_ms > 86_400_000) fail("artifact.duration_ms", "must be at most 24 hours");
+    result.captions_sha256 = assertSha256(artifact.captions_sha256, "artifact.captions_sha256");
+    result.transcript_sha256 = assertSha256(artifact.transcript_sha256, "artifact.transcript_sha256");
 
     const hashes = [result.sha256, result.captions_sha256, result.transcript_sha256].filter(Boolean);
     if (new Set(hashes).size !== hashes.length) {

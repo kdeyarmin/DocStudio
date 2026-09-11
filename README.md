@@ -117,8 +117,8 @@ products without embedding provider URLs or copying the media reference.
 In a reviewed draft, open **Export → Publish to CareMetric Hub**. Choose a stable
 content key, a whole-number publication version, library metadata, access and app
 placements. Article exports use the saved edited guide (or generated guide when
-no edit exists). Video exports accept a reviewed local MP4 and optional WebVTT
-captions and plain-text transcript. Confirm the exact material is free of patient
+no edit exists). Video exports require a reviewed local MP4, WebVTT captions
+and a plain-text transcript, with a duration of at most 24 hours. Confirm the exact material is free of patient
 and personal information, then prepare and download every displayed file.
 
 Open the linked Hub publishing screen, sign in there and select those files for

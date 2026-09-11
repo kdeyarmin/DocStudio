@@ -102,9 +102,9 @@ function HubPublicationForm({ query }: { query: ReturnType<typeof useDocStudioDr
       </fieldset>
       {kind === 'article' ? <div className="space-y-2"><p className="text-sm">The saved edited guide is exported as exact UTF-8 Markdown (up to 2 MiB).</p><details className="text-sm"><summary className="cursor-pointer">Review the saved guide</summary><pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap rounded bg-slate-50 p-3">{draft?.edited_content?.guide_md ?? draft?.generated_content?.guide_md ?? 'No saved guide available.'}</pre></details></div> : <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">Reviewed MP4 (up to 50 MiB)<input className={fieldClass} type="file" accept="video/mp4,.mp4" onChange={event => setPrimary(event.target.files?.[0])} /></label>
-        <label className="text-sm">Video duration in seconds<input className={fieldClass} value={duration} onChange={event => setDuration(event.target.value)} inputMode="decimal" /></label>
-        <label className="text-sm">Captions (optional WebVTT)<input className={fieldClass} type="file" accept="text/vtt,.vtt" onChange={event => setCaptions(event.target.files?.[0])} /></label>
-        <label className="text-sm">Transcript (optional plain text)<input className={fieldClass} type="file" accept="text/plain,.txt" onChange={event => setTranscript(event.target.files?.[0])} /></label>
+        <label className="text-sm">Video duration in seconds (up to 86,400)<input className={fieldClass} value={duration} onChange={event => setDuration(event.target.value)} inputMode="decimal" /></label>
+        <label className="text-sm">Required captions (WebVTT, up to 10 MiB)<input className={fieldClass} type="file" accept="text/vtt,.vtt" onChange={event => setCaptions(event.target.files?.[0])} /></label>
+        <label className="text-sm">Required transcript (plain text, up to 10 MiB)<input className={fieldClass} type="file" accept="text/plain,.txt" onChange={event => setTranscript(event.target.files?.[0])} /></label>
       </div>}
       <p className="text-xs text-slate-500">The Hub checks its current upload limit before accepting files. Media, titles and summaries must contain no patient or personal information. A manifest does not grant publishing access.</p>
     </fieldset>
