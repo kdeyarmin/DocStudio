@@ -39,6 +39,8 @@ jobs:
           cache: npm
           cache-dependency-path: app/package-lock.json
       - run: npm ci --prefix app
+      - name: Audit application and build dependencies
+        run: npm audit --prefix app --audit-level=high
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
