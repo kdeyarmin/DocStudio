@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate, useSearchParams, useLocation } from 'react-router-dom';
 import { ThemeProvider } from './lib/theme';
 import { AuthProvider, useAuth } from './lib/auth';
 
@@ -249,12 +249,22 @@ function AppContent() {
   );
 }
 
+function SupportFooter() {
+  const { pathname } = useLocation();
+  if (pathname === '/video-preview') return null;
+  return <footer className="px-6 py-4 text-sm bg-slate-50 dark:bg-navy-900 text-slate-700 dark:text-slate-200 border-t border-slate-200 dark:border-slate-700">
+    CareMetric support and customer service: <a className="underline" href="tel:+18775212890">(877) 521-2890</a>
+    <span className="mx-3" aria-hidden="true">·</span><a className="underline" href="https://support-hub-web-production.up.railway.app/help?product=docstudio">Support Hub</a>
+  </footer>;
+}
+
 export default function App() {
   return (
     <ThemeProvider>
       <BrowserRouter>
         <AuthProvider>
           <AppContent />
+          <SupportFooter />
         </AuthProvider>
       </BrowserRouter>
     </ThemeProvider>
